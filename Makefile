@@ -1,4 +1,4 @@
-all: treeview
+all: treedraw
 
-treeview: main.cpp redblackSAX.hpp redblackSAX.cpp
-	g++ -o treeview -Wall main.cpp redblackSAX.cpp -lxerces-c
+treedraw: main.cpp redblackSAX.hpp node.cpp redblackSAX.cpp
+	g++ -o treedraw -Wall main.cpp node.cpp redblackSAX.cpp -lxerces-c

@@ -16,6 +16,18 @@ void redblackSAXHandler::startElement(const XMLCh* const uri,
 	XMLString::release(&message);
 }
 
+void redblackSAXHandler::endElement(const XMLCh* const uri,
+	const XMLCh* const localname, const XMLCh* const qname)
+{
+	char* message = XMLString::transcode(localname);
+	char* uriname = XMLString::transcode(uri);
+	char* qnamem = XMLString::transcode(qname);
+	cout << "End of element " << message << " with uri " << uriname << " and qname " << qnamem << endl;
+	XMLString::release(&message);
+	XMLString::release(&uriname);
+	XMLString::release(&qnamem);
+}
+
 void redblackSAXHandler::fatalError(const SAXParseException& e)
 {
 	char* message = XMLString::transcode(e.getMessage());

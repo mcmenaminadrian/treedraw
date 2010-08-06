@@ -2,7 +2,7 @@
 
 using namespace xercesc;
 
-class redblackSAXHandler:public DefaultHandler {
+class redblackSAXHandler : public DefaultHandler {
 	public:
 	void startElement(
 		const XMLCh* const uri,
@@ -10,6 +10,12 @@ class redblackSAXHandler:public DefaultHandler {
 		const XMLCh* const qname,
 		const Attributes& attrs
 	);
+	void endElement(
+		const XMLCh* const uri,
+		const XMLCh* const localname,
+		const XMLCh* const qname
+	);
+
 	void fatalError(const SAXParseException&);
 
 	redblackSAXHandler();
