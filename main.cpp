@@ -6,12 +6,11 @@
 // of the GNU GPL
 
 #include <iostream>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/sax2/XMLReaderFactory.hpp>
-#include <xercesc/sax2/DefaultHandler.hpp>
-#include "redblackSAX.hpp"
 
 using namespace std;
 using namespace xercesc;
@@ -22,19 +21,20 @@ int main(int argc, char* argv[])
 		XMLPlatformUtils::Initialize();
 	}
 	catch (const XMLException& toCatch) {
-		cout << "XML Parsing failed" << endl;
+		char* message = XMLString::transcode(toCatch.getMessage()); 
+		cout << "XML Parsing failed: " << message << endl;
+		XMLString::release(&message);
 		return 1;
 	}
 
 	//XML Parsing code goes here
 	char* xmlFile = "graphic.xml";
-	SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();
-	parser->setFeature(XMLUni::fgSAX2CoreValidation, true);
-	parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, true);
+	XercesDOMParser* parser = new XercesDOMParser();
+	parser->setValidationScheme(XercesDOMParser::Val_Always);
+	parser->setDoNamespaces(true);
 
-	redblackSAXHandler* rbSAX = new redblackSAXHandler();
-	parser->setContentHandler(rbSAX);
-	parser->setErrorHandler(rbSAX);
+	ErrorHandler* errHandler = (ErrorHandler*) new HandlerBase();
+	parser->setErrorHandler(errHandler);
 
 	try {
 		parser->parse(xmlFile);
@@ -59,7 +59,6 @@ int main(int argc, char* argv[])
 	}
 
 	delete parser;
-	delete rbSAX;
 
 	XMLPlatformUtils::Terminate();
 
