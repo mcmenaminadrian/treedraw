@@ -1,4 +1,6 @@
 #include <string>
+#include <vector>
+
 using namespace std;
 
 class node
@@ -8,8 +10,9 @@ class node
 		node(char*);
 		const string getvalue() const;
 		void setvalue(char*);
-		node* left;
-		node* right;
+		int left;
+		int right;
+		void* otherdata;
 	private:
 		string value;
 };
@@ -17,13 +20,6 @@ class node
 class tree
 {
 	public:
-		tree(){root = NULL;}
 		~tree();
-		const node* getroot() const;
-		void addnode(node*);
-
-	private:
-		node* root;
-		void free(node*);
-		void insertnode(node*, node*);
+		vector<node*> items;
 };
