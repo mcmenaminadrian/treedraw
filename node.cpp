@@ -5,33 +5,35 @@
 
 using namespace std;
 
-node::node()
+Node::Node()
 {
-	value = string("");
+	value = string("NULL");
 	left = -1;
 	right = -1;
+	black = true;
 	otherdata = NULL;
 }
 
-node::node(char* str)
+Node::Node(char* str)
 {
 	value = string(str);
 	left = -1;
 	right = -1;
+	black = true;
 	otherdata = NULL;
 }
 
-void node::setvalue(char* str)
+void Node::setvalue(char* str)
 {
 	value = string(str);
 }
 
-const string node::getvalue() const
+const string Node::getvalue() const
 {
 	return value;
 }
 
-tree::~tree()
+Tree::~Tree()
 {
 	int i = items.size();
 	while (i){

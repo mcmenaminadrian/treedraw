@@ -11,6 +11,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
+#include "tree.hpp"
 
 using namespace std;
 using namespace xercesc;
@@ -35,6 +36,7 @@ int main(int argc, char* argv[])
 
 	ErrorHandler* errHandler = (ErrorHandler*) new HandlerBase();
 	parser->setErrorHandler(errHandler);
+	Tree rbtree;
 
 	try {
 		parser->parse(xmlFile);
@@ -47,14 +49,52 @@ int main(int argc, char* argv[])
 		XMLCh* nodeTag = XMLString::transcode("node");
 		DOMNodeList* nodeslist = rbtreedoc->getElementsByTagName(nodeTag);
 		if (!nodeslist)
-			cout << "Empty list?!" << endl;
+			cout << "Empty tree: nothing to process" << endl;
 		else {
-			cout << "We have " << nodeslist->getLength() << " nodes in this red black tree" << endl;
+			int max = nodeslist->getLength();
+			for (int x = 0; x < max; x++)
+			{
+				DOMNode* nxtNode = nodeslist->item(x);
+				if (!nxtNode.hasChildNodes()) {
+					//leaf node
+					cout << "Node " << x << " is a leaf node" << endl;
+					Node* lfnode = new Node();
+					rbtree.items.push_back(lfnode);
+				}
+				else {
+					int val = 0;
+					bool red = false;
+					//examine children
+					DOMNodeList* childlist = nxtNode->getChildNodes();
+					XMLSize_t cl = childlist->getLength();
+					XMLCh* testData = XMLString::transcode("data");
+					XMLCh* testV = XMLString::transcode("v");
+					XMLCh* testC = XMLString::transcode("c");
+					XMLCh* testKey = XMLString::transcode("key");
+					for (XMLSize_t r = 0; r < cl; r++)
+					{
+						DOMNode* cNode = childlist->Item(r);
+						XMLCh* elTag = XMLString::transcode(cNode->getNodeName());
+						if (XMLString::equals(elTag, testData)) {
+							//have a data tag - what is the key?
+							XMLCh* keyval = cNode->getAttribute(testKey);
+							if (XMLString::equals(testV, keyval)) {
+								//read in the value
+								XMLCh* valD = cNode->getData();
+								char* valstr = XMLString::transcode(valD);
+								cout << "Node " << x << " has value " << valstr << endl;
+								val = atoi(valstr);
+								XMLString::release(valstr);
+								XMLString::release(valD);
+							}
+							XMLString::release(keyval);
+						}
+					}
+				}
+			}
+			cout << "We have " << max << " nodes in this red black tree" << endl;
 		}
-		XMLString::release(&nodeTag);
-	//	char* docname = XMLString::transcode(rbtreetype->getName());
-	//	cout << "The supplied XML file is of type: " << docname << endl;
-	//	XMLString::release(&docname);
+		XMLString::release(&nodeTag);	
 
 	}
 	catch (const XMLException& toCatch) {

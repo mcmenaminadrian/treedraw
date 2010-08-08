@@ -3,23 +3,24 @@
 
 using namespace std;
 
-class node
+class Node
 {
 	public:
-		node();
-		node(char*);
+		Node();
+		Node(char*);
 		const string getvalue() const;
 		void setvalue(char*);
 		int left;
 		int right;
+		bool black;
 		void* otherdata;
 	private:
 		string value;
 };
 
-class tree
+class Tree
 {
 	public:
-		~tree();
-		vector<node*> items;
+		~Tree();
+		vector<Node*> items;
 };
