@@ -6,11 +6,11 @@
 // of the GNU GPL
 
 #include <iostream>
-#include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
 
 using namespace std;
 using namespace xercesc;
@@ -38,6 +38,13 @@ int main(int argc, char* argv[])
 
 	try {
 		parser->parse(xmlFile);
+		DOMDocument* rbtreedoc = parser->getDocument();
+
+		DOMDocumentType* rbtreetype = rbtreedoc->getDoctype();
+		char* docname = XMLString::transcode(rbtreetype->getName());
+		cout << "The supplied XML file is of type: " << docname << endl;
+		XMLString::release(&docname);
+
 	}
 	catch (const XMLException& toCatch) {
 		char* message = XMLString::transcode(toCatch.getMessage());
@@ -57,6 +64,7 @@ int main(int argc, char* argv[])
 		cout << "Unexpected Exception" << endl;
 		return -1;
 	}
+
 
 	delete parser;
 
