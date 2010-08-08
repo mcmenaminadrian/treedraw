@@ -41,9 +41,20 @@ int main(int argc, char* argv[])
 		DOMDocument* rbtreedoc = parser->getDocument();
 
 		DOMDocumentType* rbtreetype = rbtreedoc->getDoctype();
-		char* docname = XMLString::transcode(rbtreetype->getName());
-		cout << "The supplied XML file is of type: " << docname << endl;
-		XMLString::release(&docname);
+		if (rbtreetype == NULL)
+			cout << "NULL Document type" << endl;
+
+		XMLCh* nodeTag = XMLString::transcode("node");
+		DOMNodeList* nodeslist = rbtreedoc->getElementsByTagName(nodeTag);
+		if (!nodeslist)
+			cout << "Empty list?!" << endl;
+		else {
+			cout << "We have " << nodeslist->getLength() << " nodes in this red black tree" << endl;
+		}
+		XMLString::release(&nodeTag);
+	//	char* docname = XMLString::transcode(rbtreetype->getName());
+	//	cout << "The supplied XML file is of type: " << docname << endl;
+	//	XMLString::release(&docname);
 
 	}
 	catch (const XMLException& toCatch) {
