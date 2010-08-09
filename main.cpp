@@ -16,6 +16,49 @@
 using namespace std;
 using namespace xercesc;
 
+void addEdges(Tree& rbtree, DOMNodeList* edgelist)
+{
+	XMLCh* testID = XMLString::transcode("id");
+	XMLCh* testSource = XMLString::transcode("source");
+	XMLCh* testTarget = XMLString::transcode("target");
+	XMLSize_t nedges = edgelist->getLength();
+
+	for (XMLSize_t z = 0; z < nedges; z++)
+	{
+		bool left = true;
+		int source = -1;
+		int target = -1;
+		DOMElement* elEdge = (DOMElement*)edgelist->item(z);
+		//left or right?
+		XMLCh* eID = elEdge->getAttribute(testID);
+		char* idstr = XMLString::transcode(eID);
+		string xx(idstr);
+		if (xx[0] == 'r')
+			left = false;
+		cout << "Edge ID was " << xx;
+		//source
+		XMLCh* eS = elEdge->getAttribute(testSource);
+		char* srcstr = XMLString::transcode(eS);
+		source = atoi(srcstr);
+		cout << " and the source is " << source;
+		//target
+		XMLCh* eT = elEdge->getAttribute(testTarget);
+		char* tarstr = XMLString::transcode(eT);
+		target = atoi(tarstr);
+		cout << " and the target is " << target << endl;
+		if (left)
+			rbtree.items[source]->left = target;
+		else
+			rbtree.items[source]->right = target;
+		XMLString::release(&idstr);
+		XMLString::release(&srcstr);
+		XMLString::release(&tarstr);
+	}
+	XMLString::release(&testID);
+	XMLString::release(&testTarget);
+	XMLString::release(&testSource);
+}	
+
 void allocBranchNode(Tree& rbtree, DOMNodeList* dlist)
 {
 	bool red = false;
@@ -91,13 +134,18 @@ int main(int argc, char* argv[])
 		parser->parse(xmlFile.c_str());
 		DOMDocument* rbtreedoc = parser->getDocument();
 
+		//Process nodes
 		XMLCh* nodeTag = XMLString::transcode("node");
-		DOMNodeList* nodeslist = rbtreedoc->getElementsByTagName(nodeTag);
-		if (!nodeslist)
+		DOMNodeList* nodeslist =
+			rbtreedoc->getElementsByTagName(nodeTag);
+		XMLString::release(&nodeTag);
+		if (!nodeslist) {
 			cout << "Empty tree: nothing to process" << endl;
+			return;
+		}
 		else {
-			int max = nodeslist->getLength();
-			for (int x = 0; x < max; x++)
+			XMLSize_t max = nodeslist->getLength();
+			for (XMLSize_t x = 0; x < max; x++)
 			{
 				DOMNode* nxtNode = nodeslist->item(x);
 				if (!nxtNode->hasChildNodes()) {
@@ -112,10 +160,18 @@ int main(int argc, char* argv[])
 					allocBranchNode(rbtree, childlist);
 				}
 			}
-			cout << "We have " << rbtree.items.size() << " nodes in this red black tree, matching " << max << "hopefully" << endl;
 		}
-		XMLString::release(&nodeTag);	
-
+		//Process edges
+		XMLCh* edgeTag = XMLString::transcode("edge");
+		DOMNodeList* edgelist =
+			rbtreedoc->getElementsByTagName(edgeTag);
+		XMLString::release(&edgeTag);
+		if (!edgelist) {
+			cout << "Malformed GraphML file - no edges" << endl;
+			return;
+		}
+		else
+			addEdges(rbtree, edgelist);
 	}
 	catch (const XMLException& toCatch) {
 		char* message = XMLString::transcode(toCatch.getMessage());
