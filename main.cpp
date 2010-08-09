@@ -35,17 +35,14 @@ void addEdges(Tree& rbtree, DOMNodeList* edgelist)
 		string xx(idstr);
 		if (xx[0] == 'r')
 			left = false;
-		cout << "Edge ID was " << xx;
 		//source
 		const XMLCh* eS = elEdge->getAttribute(testSource);
 		char* srcstr = XMLString::transcode(eS);
 		source = atoi(srcstr);
-		cout << " and the source is " << source;
 		//target
 		const XMLCh* eT = elEdge->getAttribute(testTarget);
 		char* tarstr = XMLString::transcode(eT);
 		target = atoi(tarstr);
-		cout << " and the target is " << target << endl;
 		if (left)
 			rbtree.items[source]->left = target;
 		else
