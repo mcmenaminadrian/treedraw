@@ -81,7 +81,8 @@ int main(int argc, char* argv[])
 							const XMLCh* keyval = eNode->getAttribute(testKey);
 							if (XMLString::equals(testV, keyval)) {
 								//read in the value
-								const XMLCh* valD = ((DOMCharacterData*)eNode)->getData();
+								DOMText* txtEl = (DOMText*)eNode->getFirstChild();
+								const XMLCh* valD = txtEl->getData();
 								char* valstr = XMLString::transcode(valD);
 								cout << "Node " << x << " has value " << valstr << endl;
 								val = atoi(valstr);
