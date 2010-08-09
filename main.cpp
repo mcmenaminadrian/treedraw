@@ -30,19 +30,19 @@ void addEdges(Tree& rbtree, DOMNodeList* edgelist)
 		int target = -1;
 		DOMElement* elEdge = (DOMElement*)edgelist->item(z);
 		//left or right?
-		XMLCh* eID = elEdge->getAttribute(testID);
+		const XMLCh* eID = elEdge->getAttribute(testID);
 		char* idstr = XMLString::transcode(eID);
 		string xx(idstr);
 		if (xx[0] == 'r')
 			left = false;
 		cout << "Edge ID was " << xx;
 		//source
-		XMLCh* eS = elEdge->getAttribute(testSource);
+		const XMLCh* eS = elEdge->getAttribute(testSource);
 		char* srcstr = XMLString::transcode(eS);
 		source = atoi(srcstr);
 		cout << " and the source is " << source;
 		//target
-		XMLCh* eT = elEdge->getAttribute(testTarget);
+		const XMLCh* eT = elEdge->getAttribute(testTarget);
 		char* tarstr = XMLString::transcode(eT);
 		target = atoi(tarstr);
 		cout << " and the target is " << target << endl;
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 		XMLString::release(&nodeTag);
 		if (!nodeslist) {
 			cout << "Empty tree: nothing to process" << endl;
-			return;
+			goto cleanup;
 		}
 		else {
 			XMLSize_t max = nodeslist->getLength();
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 		XMLString::release(&edgeTag);
 		if (!edgelist) {
 			cout << "Malformed GraphML file - no edges" << endl;
-			return;
+			goto cleanup;
 		}
 		else
 			addEdges(rbtree, edgelist);
@@ -192,6 +192,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+cleanup:
 
 	delete parser;
 
