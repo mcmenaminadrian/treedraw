@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
 				DOMNode* nxtNode = nodeslist->item(x);
 				if (!nxtNode->hasChildNodes()) {
 					//leaf node
-					cout << "Node " << x << " is a leaf node" << endl;
 					Node* lfnode = new Node();
 					rbtree.items.push_back(lfnode);
 				}
@@ -85,7 +84,6 @@ int main(int argc, char* argv[])
 								DOMText* txtEl = (DOMText*)eNode->getFirstChild();
 								const XMLCh* valD = txtEl->getData();
 								char* valstr = XMLString::transcode(valD);
-								cout << "Node " << x << " has value " << valstr << endl;
 								Node* rbnode = new Node(valstr);
 								rbtree.items.push_back(rbnode);
 								XMLString::release(&valstr);
