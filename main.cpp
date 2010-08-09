@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
 					XMLCh* testV = XMLString::transcode("v");
 					XMLCh* testC = XMLString::transcode("c");
 					XMLCh* testKey = XMLString::transcode("key");
+					XMLCh* testRed = XMLString::transcode("red");
 					for (XMLSize_t r = 0; r < cl; r++)
 					{
 						DOMNode* cNode = childlist->item(r);
@@ -85,14 +86,23 @@ int main(int argc, char* argv[])
 								const XMLCh* valD = txtEl->getData();
 								char* valstr = XMLString::transcode(valD);
 								cout << "Node " << x << " has value " << valstr << endl;
-								val = atoi(valstr);
+								Node* rbnode = new Node(valstr);
+								rbtree.items.push_back(rbnode);
 								XMLString::release(&valstr);
 								//XMLString::release(&valD);
 							}
-							//XMLString::release(&keyval);
+							else if (XMLString::equals(testC, keyval))
+							{
+								DOMText* txtEl = (DOMText*)eNode->getFirstChild();
+								const XMLCh* colD = txtEl->getData();
+								if (XMLString::equals(colD, testRed))
+									red = true;
+							}
 						}
 					}
-				}
+					if (red)
+						rbtree.items[rbtree.items.size() - 1]->black = false;
+				}				//XMLString::release(&keyval);
 			}
 			cout << "We have " << max << " nodes in this red black tree" << endl;
 		}
