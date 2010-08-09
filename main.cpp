@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 			for (int x = 0; x < max; x++)
 			{
 				DOMNode* nxtNode = nodeslist->item(x);
-				if (!nxtNode.hasChildNodes()) {
+				if (!nxtNode->hasChildNodes()) {
 					//leaf node
 					cout << "Node " << x << " is a leaf node" << endl;
 					Node* lfnode = new Node();
@@ -73,21 +73,22 @@ int main(int argc, char* argv[])
 					XMLCh* testKey = XMLString::transcode("key");
 					for (XMLSize_t r = 0; r < cl; r++)
 					{
-						DOMNode* cNode = childlist->Item(r);
-						XMLCh* elTag = XMLString::transcode(cNode->getNodeName());
+						DOMNode* cNode = childlist->item(r);
+						const XMLCh* elTag = cNode->getNodeName();
 						if (XMLString::equals(elTag, testData)) {
 							//have a data tag - what is the key?
-							XMLCh* keyval = cNode->getAttribute(testKey);
+							DOMElement* eNode = (DOMElement*) cNode;
+							const XMLCh* keyval = eNode->getAttribute(testKey);
 							if (XMLString::equals(testV, keyval)) {
 								//read in the value
-								XMLCh* valD = cNode->getData();
+								const XMLCh* valD = ((DOMCharacterData*)eNode)->getData();
 								char* valstr = XMLString::transcode(valD);
 								cout << "Node " << x << " has value " << valstr << endl;
 								val = atoi(valstr);
-								XMLString::release(valstr);
-								XMLString::release(valD);
+								XMLString::release(&valstr);
+								//XMLString::release(&valD);
 							}
-							XMLString::release(keyval);
+							//XMLString::release(&keyval);
 						}
 					}
 				}
