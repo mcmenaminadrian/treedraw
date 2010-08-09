@@ -16,6 +16,55 @@
 using namespace std;
 using namespace xercesc;
 
+void allocBranchNode(Tree& rbtree, DOMNodeList* dlist)
+{
+	bool red = false;
+	XMLCh* testData = XMLString::transcode("data");
+	XMLCh* testV = XMLString::transcode("v");
+	XMLCh* testC = XMLString::transcode("c");
+	XMLCh* testKey = XMLString::transcode("key");
+	XMLCh* testRed = XMLString::transcode("red");
+
+	XMLSize_t cl = dlist->getLength();
+
+	for (XMLSize_t r = 0; r < cl; r++)
+	{
+		DOMNode* cNode = dlist->item(r);
+		const XMLCh* elTag = cNode->getNodeName();
+		if (XMLString::equals(elTag, testData)) {
+			//have a data tag - what is the key?
+			DOMElement* eNode = (DOMElement*) cNode;
+			const XMLCh* keyval = eNode->getAttribute(testKey);
+			if (XMLString::equals(testV, keyval)) {
+				//read in the value
+				DOMText* txtEl =
+					(DOMText*)eNode->getFirstChild();
+				const XMLCh* valD = txtEl->getData();
+				char* valstr = XMLString::transcode(valD);
+				Node* rbnode = new Node(valstr);
+				rbtree.items.push_back(rbnode);
+				XMLString::release(&valstr);
+			}
+			else if (XMLString::equals(testC, keyval))
+			{
+				DOMText* txtEl =
+					(DOMText*)eNode->getFirstChild();
+				const XMLCh* colD = txtEl->getData();
+				if (XMLString::equals(colD, testRed))
+				red = true;
+			}
+		}
+	}
+	if (red)
+		rbtree.items[rbtree.items.size() - 1]->black = false;
+
+	XMLString::release(&testData);
+	XMLString::release(&testV);
+	XMLString::release(&testC);
+	XMLString::release(&testKey);
+	XMLString::release(&testRed);
+}
+
 int main(int argc, char* argv[])
 {
 	try {
@@ -29,7 +78,7 @@ int main(int argc, char* argv[])
 	}
 
 	//XML Parsing code goes here
-	char* xmlFile = "graphic.xml";
+	string xmlFile("graphic.xml");
 	XercesDOMParser* parser = new XercesDOMParser();
 	parser->setValidationScheme(XercesDOMParser::Val_Always);
 	parser->setDoNamespaces(true);
@@ -39,12 +88,8 @@ int main(int argc, char* argv[])
 	Tree rbtree;
 
 	try {
-		parser->parse(xmlFile);
+		parser->parse(xmlFile.c_str());
 		DOMDocument* rbtreedoc = parser->getDocument();
-
-		DOMDocumentType* rbtreetype = rbtreedoc->getDoctype();
-		if (rbtreetype == NULL)
-			cout << "NULL Document type" << endl;
 
 		XMLCh* nodeTag = XMLString::transcode("node");
 		DOMNodeList* nodeslist = rbtreedoc->getElementsByTagName(nodeTag);
@@ -61,48 +106,13 @@ int main(int argc, char* argv[])
 					rbtree.items.push_back(lfnode);
 				}
 				else {
-					int val = 0;
-					bool red = false;
-					//examine children
-					DOMNodeList* childlist = nxtNode->getChildNodes();
-					XMLSize_t cl = childlist->getLength();
-					XMLCh* testData = XMLString::transcode("data");
-					XMLCh* testV = XMLString::transcode("v");
-					XMLCh* testC = XMLString::transcode("c");
-					XMLCh* testKey = XMLString::transcode("key");
-					XMLCh* testRed = XMLString::transcode("red");
-					for (XMLSize_t r = 0; r < cl; r++)
-					{
-						DOMNode* cNode = childlist->item(r);
-						const XMLCh* elTag = cNode->getNodeName();
-						if (XMLString::equals(elTag, testData)) {
-							//have a data tag - what is the key?
-							DOMElement* eNode = (DOMElement*) cNode;
-							const XMLCh* keyval = eNode->getAttribute(testKey);
-							if (XMLString::equals(testV, keyval)) {
-								//read in the value
-								DOMText* txtEl = (DOMText*)eNode->getFirstChild();
-								const XMLCh* valD = txtEl->getData();
-								char* valstr = XMLString::transcode(valD);
-								Node* rbnode = new Node(valstr);
-								rbtree.items.push_back(rbnode);
-								XMLString::release(&valstr);
-								//XMLString::release(&valD);
-							}
-							else if (XMLString::equals(testC, keyval))
-							{
-								DOMText* txtEl = (DOMText*)eNode->getFirstChild();
-								const XMLCh* colD = txtEl->getData();
-								if (XMLString::equals(colD, testRed))
-									red = true;
-							}
-						}
-					}
-					if (red)
-						rbtree.items[rbtree.items.size() - 1]->black = false;
-				}				//XMLString::release(&keyval);
+
+					DOMNodeList* childlist =
+						nxtNode->getChildNodes();
+					allocBranchNode(rbtree, childlist);
+				}
 			}
-			cout << "We have " << max << " nodes in this red black tree" << endl;
+			cout << "We have " << rbtree.items.size() << " nodes in this red black tree, matching " << max << "hopefully" << endl;
 		}
 		XMLString::release(&nodeTag);	
 
