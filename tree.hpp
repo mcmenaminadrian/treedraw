@@ -14,6 +14,8 @@ class Node
 		int right;
 		bool black;
 		void* otherdata;
+		int yco;
+		int xco;
 	private:
 		string value;
 };

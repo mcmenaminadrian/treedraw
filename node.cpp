@@ -12,6 +12,8 @@ Node::Node()
 	right = -1;
 	black = true;
 	otherdata = NULL;
+	yco = -1;
+	xco = -1;
 }
 
 Node::Node(char* str)
@@ -21,6 +23,8 @@ Node::Node(char* str)
 	right = -1;
 	black = true;
 	otherdata = NULL;
+	yco = -1;
+	xco = -1;
 }
 
 void Node::setvalue(char* str)
