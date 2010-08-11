@@ -14,8 +14,10 @@ class Node
 		int right;
 		bool black;
 		void* otherdata;
+		//drawing data
 		int yco;
 		int xco;
+		int offset;
 	private:
 		string value;
 };
@@ -23,6 +25,13 @@ class Node
 class Tree
 {
 	public:
+		Tree();
+		Tree(int);
+		void position();
 		~Tree();
 		vector<Node*> items;
+
+	private:
+		void calcpoints(Node*, int);
+		int distance;
 };

@@ -37,6 +37,16 @@ const string Node::getvalue() const
 	return value;
 }
 
+Tree::Tree()
+{
+	distance = 2;
+}
+
+Tree::Tree(int d)
+{
+	distance = d;
+}
+
 Tree::~Tree()
 {
 	int i = items.size();
@@ -47,3 +57,22 @@ Tree::~Tree()
 	}
 }
 
+void Tree::calcpoints(Node* n, int level, Node* leftmost, Node* rightmost)
+{
+	n->yco = level;
+	if (n->left != -1)
+		calcpoints(items[n->left], level + 1, n, rightmost);
+	if (n->right != -1)
+		calcpoints(items[n->right], level + 1, leftmost, n);
+
+	if (!n->left && !n->right) {
+	}}	
+
+
+void Tree::position()
+{
+	if (items.size() == 0)
+		return;
+	//post order traversal
+	calcpoints(items[0], 0, items[0], items[0]);
+}

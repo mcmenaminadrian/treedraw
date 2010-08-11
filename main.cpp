@@ -136,8 +136,8 @@ int main(int argc, char* argv[])
 		DOMNodeList* nodeslist =
 			rbtreedoc->getElementsByTagName(nodeTag);
 		XMLString::release(&nodeTag);
-		if (!nodeslist) {
-			cout << "Empty tree: nothing to process" << endl;
+		if (!nodeslist || nodeslist->getLength() == 0) {
+			cout << "Cannot get list of tree nodes" << endl;
 			goto cleanup;
 		}
 		else {
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
 		DOMNodeList* edgelist =
 			rbtreedoc->getElementsByTagName(edgeTag);
 		XMLString::release(&edgeTag);
-		if (!edgelist) {
+		if (!edgelist || edgelist->getLength() == 0) {
 			cout << "Malformed GraphML file - no edges" << endl;
 			goto cleanup;
 		}
