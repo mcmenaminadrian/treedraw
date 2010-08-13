@@ -189,6 +189,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	rbtree.position();
 cleanup:
 
 	delete parser;

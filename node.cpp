@@ -14,6 +14,7 @@ Node::Node()
 	otherdata = NULL;
 	yco = -1;
 	xco = -1;
+	offset = 2;
 }
 
 Node::Node(char* str)
@@ -25,6 +26,7 @@ Node::Node(char* str)
 	otherdata = NULL;
 	yco = -1;
 	xco = -1;
+	offset = 2;
 }
 
 void Node::setvalue(char* str)
@@ -107,4 +109,6 @@ void Tree::position()
 		return;
 	//post order traversal
 	calcpoints(items[0], 0);
+	for (int x = 0; x<items.size() - 1; x++)
+		cout << "NODE " << x << " has sib sep of " << items[x]->offset << " and is at level " << items[x]->yco << " with left child at " << items[x]->left << " and right child at " << items[x]->right << endl; 
 }
