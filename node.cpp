@@ -86,17 +86,21 @@ void Tree::calcpoints(Node* n, int level)
 			rootsep = rootsep + (minsep - cursep);
 			cursep = minsep;
  		}
+
 		if (left->right != -1) {
 			cursep = cursep - (left->offset + 1) / 2;
 			left = items[left->right];
 		}
-		else if (right->left != -1 ) {
-			cursep = cursep - (right->offset + 1) / 2;
-			right = items[right->left];
-		}
 		else if (left->left != -1) {
 			cursep = cursep + (left->offset + 1) / 2;
 			left = items[left->left];
+		}
+		else
+			break;
+
+		if (right->left != -1 ) {
+			cursep = cursep - (right->offset + 1) / 2;
+			right = items[right->left];
 		}
 		else if (right->right != -1) {
 			cursep = cursep + (right->offset + 1) / 2;
