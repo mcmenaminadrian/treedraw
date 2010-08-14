@@ -70,41 +70,48 @@ void Tree::calcpoints(Node* n, int level)
 	Node* left = NULL;
 	Node* right = NULL;
 	int ileft = n->left;
-	if (ileft != 1)
+	if (ileft != -1)
 		left = items[ileft];
 	
 	int iright = n->right;
 	if (iright != -1)
 		right = items[iright];
 
+	const int minsep = distance;
+	int rootsep = minsep * 2;
+	int cursep = rootsep;
+
 	while (left && right) {
-		if (left->right != -1 && right->left != -1) {
-			n->offset = n->offset + distance;
+		if (cursep < minsep) {
+			rootsep = rootsep + (minsep - cursep);
+			cursep = minsep;
+ 		}
+		if (left->right != -1) {
+			cursep = cursep - (left->offset + 1) / 2;
 			left = items[left->right];
+		}
+		else if (right->left != -1 ) {
+			cursep = cursep - (right->offset + 1) / 2;
 			right = items[right->left];
 		}
-		else if (left->right != -1) {
-			left = items[left->right];
-			if (right->right != -1) 
-				right = items[right->right];
-			else
-				break;
+		else if (left->left != -1) {
+			cursep = cursep + (left->offset + 1) / 2;
+			left = items[left->left];
 		}
-		else {
-			if (left->left != -1)
-				left = items[left->left];
-			else
-				break;
-			if (right->left != -1)
-				right = items[right->left];
-			else
-				break;
+		else if (right->right != -1) {
+			cursep = cursep + (right->offset + 1) / 2;
+			right = items[right->right];
 		}
+		else
+			break;
 	}
+
+	n->offset = rootsep;
 }
 
 void Tree::position()
 {
+	cout << "Node 0 has left " << items[0]->left << " and right " << items[0]->right << endl;
 	if (items.size() == 0)
 		return;
 	//post order traversal
