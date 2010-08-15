@@ -33,5 +33,6 @@ class Tree
 
 	private:
 		void calcpoints(Node*, int);
+		void fixpoints(Node*, int);
 		int distance;
 };

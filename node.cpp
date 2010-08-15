@@ -113,6 +113,16 @@ void Tree::calcpoints(Node* n, int level)
 	n->offset = rootsep;
 }
 
+void Tree::fixpoints(Node* n, int x)
+{
+	n->xco = x;
+	int disp = (n->offset + 1) / 2;
+	if (n->left != -1)
+		fixpoints(items[n->left], x - disp);
+	if (n->right != -1)
+		fixpoints(items[n->right], x + disp);
+}
+
 void Tree::position()
 {
 	cout << "Node 0 has left " << items[0]->left << " and right " << items[0]->right << endl;
@@ -122,4 +132,8 @@ void Tree::position()
 	calcpoints(items[0], 0);
 	for (int x = 0; x<items.size() - 1; x++)
 		cout << "NODE " << x << " has sib sep of " << items[x]->offset << " and is at level " << items[x]->yco << " with left child at " << items[x]->left << " and right child at " << items[x]->right << endl; 
+	fixpoints(items[0], 0);
+	for (int x = 0; x<items.size() - 1; x++)
+		cout << "NODE " << x << " is at y " << items[x]->yco << " and x " << items[x]->xco << endl; 
+
 }
