@@ -18,8 +18,18 @@ class Node
 		int yco;
 		int xco;
 		int offset;
+		bool thread;
 	private:
 		string value;
+};
+
+class Extreme
+{
+	public:
+		Node* n;
+		int offset;
+		int level;
+		Extreme() {n = NULL; offset = level = 0;}
 };
 
 class Tree
@@ -32,7 +42,9 @@ class Tree
 		vector<Node*> items;
 
 	private:
-		void calcpoints(Node*, int);
+		void calcpoints(Node*, int, Extreme&, Extreme&);
 		void fixpoints(Node*, int);
 		int distance;
 };
+
+

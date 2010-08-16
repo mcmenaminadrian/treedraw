@@ -15,6 +15,7 @@ Node::Node()
 	yco = -1;
 	xco = -1;
 	offset = 2;
+	thread = false;
 }
 
 Node::Node(char* str)
@@ -27,6 +28,7 @@ Node::Node(char* str)
 	yco = -1;
 	xco = -1;
 	offset = 2;
+	thread = false;
 }
 
 void Node::setvalue(char* str)
@@ -59,13 +61,16 @@ Tree::~Tree()
 	}
 }
 
-void Tree::calcpoints(Node* n, int level)
+void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 {
+	Extreme rr, rl, lr, ll;
+	int loffsum = 0;
+	int roffsum = 0;
 	n->yco = level;
 	if (n->left != -1)
-		calcpoints(items[n->left], level + 1 );
+		calcpoints(items[n->left], level + 1, lr, ll);
 	if (n->right != -1)
-		calcpoints(items[n->right], level + 1);
+		calcpoints(items[n->right], level + 1, rr, rl);
 
 	Node* left = NULL;
 	Node* right = NULL;
@@ -76,6 +81,18 @@ void Tree::calcpoints(Node* n, int level)
 	int iright = n->right;
 	if (iright != -1)
 		right = items[iright];
+
+	if (iright == -1 && ileft == -1)
+	{
+		//leaf node most be most extreme
+		lmost.n = n;
+		lmost.offset = 0;
+		lmost.level = level;
+		rmost.n = n;
+		rmost.offset = 0;
+		rmost.level = level;
+		return;
+	}
 
 	const int minsep = distance;
 	int rootsep = minsep * 2;
@@ -88,39 +105,101 @@ void Tree::calcpoints(Node* n, int level)
  		}
 
 		if (left->right != -1) {
+			loffsum = loffsum + left->offset;
 			cursep = cursep - (left->offset + 1) / 2;
+			ileft = left->right;
 			left = items[left->right];
 		}
-		else if (left->left != -1) {
-			cursep = cursep + (left->offset + 1) / 2;
-			left = items[left->left];
-		}
 		else
-			break;
+		{
+			loffsum = loffsum - left->offset;
+			if (left->left != -1) {
+				cursep = cursep + (left->offset + 1) / 2;
+				ileft = left->left;
+				left = items[left->left];
+			}
+			else
+				break;
+		}
 
 		if (right->left != -1 ) {
+			roffsum = roffsum - right->offset;
 			cursep = cursep - (right->offset + 1) / 2;
+			iright = right->left;
 			right = items[right->left];
 		}
-		else if (right->right != -1) {
-			cursep = cursep + (right->offset + 1) / 2;
-			right = items[right->right];
-		}
 		else
-			break;
+		{
+			roffsum = roffsum + right->offset;
+			if (right->right != -1) {
+				cursep = cursep + (right->offset + 1) / 2;
+				iright = right->right;
+				right = items[right->right];
+			}
+			else
+				break;
+		}
 	}
 
 	n->offset = rootsep;
+
+	//update extreme descendants details
+	if (rr.level > ll.level || n->left == -1)
+	{
+		lmost = rl;
+		lmost.offset = lmost.offset + n->offset;
+	}
+	else {
+		lmost = ll;
+		lmost.offset = lmost.offset - n->offset;
+	}
+
+	if (lr.level > rr.level || n->right == -1)
+	{
+		rmost = lr;
+		rmost.offset = rmost.offset - n->offset;
+	}
+	else {
+		rmost = rr;
+		rmost.offset = rmost.offset + n->offset;
+	}
+
+	//threading
+	if (left != NULL && left != items[n->left])
+	{
+		rr.n->thread = true;
+		rr.n->offset = abs((rr.offset + n->offset) - loffsum);
+		if (loffsum - n->offset <= rr.offset)
+			rr.n->left = ileft;
+		else
+			rr.n->right = ileft;
+	}
+	else if (right != NULL && right != items[n->right])
+	{
+		ll.n->thread = true;
+		ll.n->offset = abs((ll.offset - n->offset) - roffsum);
+		if (roffsum + n->offset >= ll.offset)
+			ll.n->right = iright;
+		else
+			ll.n->left = iright;
+	}
 }
 
 void Tree::fixpoints(Node* n, int x)
 {
 	n->xco = x;
-	int disp = (n->offset + 1) / 2;
-	if (n->left != -1)
-		fixpoints(items[n->left], x - disp);
-	if (n->right != -1)
-		fixpoints(items[n->right], x + disp);
+	if (n->thread == true) {
+		n->thread = false;
+		n->right = -1;
+		n->left = -1;
+	}
+	else {
+		int disp = (n->offset + 1) / 2;
+		if (n->left != -1)
+			fixpoints(items[n->left], x - disp);
+		if (n->right != -1)
+			fixpoints(items[n->right], x + disp);
+	}
 }
 
 void Tree::position()
@@ -129,11 +208,12 @@ void Tree::position()
 	if (items.size() == 0)
 		return;
 	//post order traversal
-	calcpoints(items[0], 0);
+	Extreme lhold, rhold;
+	calcpoints(items[0], 0, lhold, rhold);
 	for (int x = 0; x<items.size() - 1; x++)
 		cout << "NODE " << x << " has sib sep of " << items[x]->offset << " and is at level " << items[x]->yco << " with left child at " << items[x]->left << " and right child at " << items[x]->right << endl; 
 	fixpoints(items[0], 0);
 	for (int x = 0; x<items.size() - 1; x++)
-		cout << "NODE " << x << " is at y " << items[x]->yco << " and x " << items[x]->xco << endl; 
+		cout << "NODE " << x << ": " << items[x]->yco << "," << items[x]->xco << endl; 
 
 }
