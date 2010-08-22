@@ -13,7 +13,7 @@ class Node
 		int left;
 		int right;
 		bool black;
-		void* otherdata;
+		string otherdata;
 		//drawing data
 		int yco;
 		int xco;

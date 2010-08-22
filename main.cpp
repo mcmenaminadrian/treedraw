@@ -62,8 +62,10 @@ void allocBranchNode(Tree& rbtree, DOMNodeList* dlist)
 	XMLCh* testData = XMLString::transcode("data");
 	XMLCh* testV = XMLString::transcode("v");
 	XMLCh* testC = XMLString::transcode("c");
+	XMLCh* testA = XMLString::transcode("additional");
 	XMLCh* testKey = XMLString::transcode("key");
 	XMLCh* testRed = XMLString::transcode("red");
+	string addstr;
 
 	XMLSize_t cl = dlist->getLength();
 
@@ -93,16 +95,27 @@ void allocBranchNode(Tree& rbtree, DOMNodeList* dlist)
 				if (XMLString::equals(colD, testRed))
 				red = true;
 			}
+			else if (XMLString::equals(testA, keyval))
+			{
+				DOMText* txtAdd =
+					(DOMText*)eNode->getFirstChild();
+				const XMLCh* valAdd = txtAdd->getData();
+				char* addcp = XMLString::transcode(valAdd);
+				addstr = string(addcp);
+				XMLString::release(&addcp);
+			}
 		}
 	}
 	if (red)
 		rbtree.items[rbtree.items.size() - 1]->black = false;
+	rbtree.items[rbtree.items.size() - 1]->otherdata = addstr;
 
 	XMLString::release(&testData);
 	XMLString::release(&testV);
 	XMLString::release(&testC);
 	XMLString::release(&testKey);
 	XMLString::release(&testRed);
+	XMLString::release(&testA);
 }
 
 int main(int argc, char* argv[])

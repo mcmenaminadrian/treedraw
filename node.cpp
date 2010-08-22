@@ -11,7 +11,6 @@ Node::Node()
 	left = -1;
 	right = -1;
 	black = true;
-	otherdata = NULL;
 	yco = -1;
 	xco = -1;
 	offset = 2;
@@ -24,7 +23,6 @@ Node::Node(char* str)
 	left = -1;
 	right = -1;
 	black = true;
-	otherdata = NULL;
 	yco = -1;
 	xco = -1;
 	offset = 2;
@@ -211,9 +209,8 @@ void Tree::position()
 	Extreme lhold, rhold;
 	calcpoints(items[0], 0, lhold, rhold);
 	for (int x = 0; x<items.size() - 1; x++)
-		cout << "NODE " << x << " has sib sep of " << items[x]->offset << " and is at level " << items[x]->yco << " with left child at " << items[x]->left << " and right child at " << items[x]->right << endl; 
 	fixpoints(items[0], 0);
 	for (int x = 0; x<items.size() - 1; x++)
-		cout << "NODE " << x << ": " << items[x]->yco << "," << items[x]->xco << endl; 
+		cout << items[x]->yco << "," << items[x]->xco << "," << items[x]->otherdata << endl; 
 
 }
