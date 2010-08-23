@@ -251,14 +251,11 @@ void Tree::fixpoints(Node* n, int x)
 
 void Tree::position()
 {
-	cout << "Node 0 has left " << items[0]->left << " and right " << items[0]->right << endl;
 	if (items.size() == 0)
 		return;
 	//post order traversal
 	Extreme lhold, rhold;
 	calcpoints(items[0], 0, lhold, rhold);
-	for (unsigned int x = 0; x<items.size() - 1; x++)
+	//pre-order traversal
 	fixpoints(items[0], 0);
-	for (unsigned int x = 0; x<items.size() - 1; x++)
-		cout << items[x]->yco << "," << items[x]->xco << "," << items[x]->otherdata << endl; 
 }

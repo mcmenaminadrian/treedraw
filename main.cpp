@@ -204,26 +204,10 @@ int main(int argc, char* argv[])
 	}
 
 	rbtree.position();
+	cout << rbtree;
 cleanup:
 
 	delete parser;
-	cout << "Tree output" << endl;
-	cout << rbtree << endl; cout << "@@@@@@@@@" << endl;
-	ofstream myfile;
-	myfile.open("Junky_stuff");
-	myfile << rbtree;
-	myfile.close();
-	ifstream anfile;
-	anfile.open("Junky_stuff");
-	Tree tester;
-	cout << "And now...." << endl;
-	anfile >> tester;
-	anfile.close();
-	cout << tester; cout << "£££££££££££" << endl;
 	XMLPlatformUtils::Terminate();
-
-	
-
-
 	return 0;
 }
