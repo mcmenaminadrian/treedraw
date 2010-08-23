@@ -17,7 +17,7 @@ Node::Node()
 	thread = false;
 }
 
-Node::Node(char* str)
+Node::Node(const char* str)
 {
 	value = string(str);
 	left = -1;
@@ -39,6 +39,50 @@ const string Node::getvalue() const
 	return value;
 }
 
+ostream& operator<<(ostream& os, const Tree& t)
+{
+	os << t.items.size() << endl;
+	os << t.distance << endl;
+	for (unsigned int l = 0; l < t.items.size(); l++)
+	{
+		Node* n = t.items[l];
+		os << n->getvalue() << endl;
+		os << n->left << endl;
+		os << n->right << endl;
+		os << n->black << endl;
+		os << n->otherdata << endl;
+		os << n->yco << endl;
+		os << n->xco << endl;
+		os << n->offset << endl;
+		os << n->thread << endl;
+	}
+	return os;
+}
+
+istream& operator>>(istream& is, Tree& t)
+{
+	t.free();
+	unsigned int k;
+	is >> k;
+	is >> t.distance;
+	for (unsigned int i = 0; i < k; i++)
+	{
+		string val;
+		is >> val;
+		Node* n = new Node(val.c_str());
+		is >> n->left;
+		is >> n->right;
+		is >> n->black;
+		is >> n->otherdata;
+		is >> n->yco;
+		is >> n->xco;
+		is >> n->offset;
+		is >> n->thread;
+		t.items.push_back(n);
+	}
+	return is;
+}
+
 Tree::Tree()
 {
 	distance = 2;
@@ -49,7 +93,7 @@ Tree::Tree(int d)
 	distance = d;
 }
 
-Tree::~Tree()
+void Tree::free()
 {
 	int i = items.size();
 	while (i){
@@ -57,6 +101,11 @@ Tree::~Tree()
 		items.pop_back();
 		i--;
 	}
+}
+
+Tree::~Tree()
+{
+	free();
 }
 
 void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
@@ -208,9 +257,8 @@ void Tree::position()
 	//post order traversal
 	Extreme lhold, rhold;
 	calcpoints(items[0], 0, lhold, rhold);
-	for (int x = 0; x<items.size() - 1; x++)
+	for (unsigned int x = 0; x<items.size() - 1; x++)
 	fixpoints(items[0], 0);
-	for (int x = 0; x<items.size() - 1; x++)
+	for (unsigned int x = 0; x<items.size() - 1; x++)
 		cout << items[x]->yco << "," << items[x]->xco << "," << items[x]->otherdata << endl; 
-
 }

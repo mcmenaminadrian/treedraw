@@ -7,7 +7,7 @@ class Node
 {
 	public:
 		Node();
-		Node(char*);
+		Node(const char*);
 		const string getvalue() const;
 		void setvalue(char*);
 		int left;
@@ -34,6 +34,8 @@ class Extreme
 
 class Tree
 {
+	friend ostream& operator<<(ostream& os, const Tree& t);
+	friend istream& operator>>(istream& is, Tree& t);
 	public:
 		Tree();
 		Tree(int);
@@ -45,6 +47,7 @@ class Tree
 		void calcpoints(Node*, int, Extreme&, Extreme&);
 		void fixpoints(Node*, int);
 		int distance;
+		void free();
 };
 
 

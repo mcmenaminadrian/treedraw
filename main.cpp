@@ -6,6 +6,7 @@
 // of the GNU GPL
 
 #include <iostream>
+#include <fstream>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -206,8 +207,23 @@ int main(int argc, char* argv[])
 cleanup:
 
 	delete parser;
-
+	cout << "Tree output" << endl;
+	cout << rbtree << endl; cout << "@@@@@@@@@" << endl;
+	ofstream myfile;
+	myfile.open("Junky_stuff");
+	myfile << rbtree;
+	myfile.close();
+	ifstream anfile;
+	anfile.open("Junky_stuff");
+	Tree tester;
+	cout << "And now...." << endl;
+	anfile >> tester;
+	anfile.close();
+	cout << tester; cout << "£££££££££££" << endl;
 	XMLPlatformUtils::Terminate();
+
+	
+
 
 	return 0;
 }
