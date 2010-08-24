@@ -51,9 +51,9 @@ ostream& operator<<(ostream& os, const Tree& t)
 		os << n->right << endl;
 		os << n->black << endl;
 		string name = n->otherdata;
-		if (name.length() == 0)
-			name = string("NULL");
-		os << name << endl;
+		os << name.length() << endl;
+		for (unsigned int k = 0; k < name.length(); k++)
+			os << name[k]; 
 		os << n->yco << endl;
 		os << n->xco << endl;
 		os << n->offset << endl;
@@ -76,9 +76,13 @@ istream& operator>>(istream& is, Tree& t)
 		is >> n->left;
 		is >> n->right;
 		is >> n->black;
-		is >> n->otherdata;
-		if (n->otherdata == "NULL")
-			n->otherdata = "";
+		int r;
+		is >> r;
+		char xch;
+		for (int y = 0; y < r; y++) {
+			is >> xch;
+			n->otherdata = n->otherdata + xch;
+		}
 		is >> n->yco;
 		is >> n->xco;
 		is >> n->offset;
