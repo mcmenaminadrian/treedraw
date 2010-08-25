@@ -279,6 +279,43 @@ int Tree::min(int x) const
 int Tree::max(int x) const
 {
 	if (items[x]->right == -1)
-		return items[x]->yco;
+		return items[x]->xco;
 	max(items[x]->right);
+}
+
+int Tree::maxdepth(int x) const
+{
+	if (items[x]->left == -1)
+		return items[x]->yco * 2;
+	else
+		maxdepth(items[x]->left);
+}
+
+void Tree::draw_next_node(ostream& os, int nxtnode, int prevx, int prevy,
+			const int offset) const
+{
+	//draw lines first
+	if (prevx != -1 && prevy != -1) {
+		os << "<line x1 = \"" << (prevx + offset) * 10 <<"\" y1 = \"" << prevy * 100 << "\" x2 = \"" << (items[nxtnode]->xco + offset) * 10 << "\" y2 = \"" << items[nxtnode]->yco * 100 << "\" stroke = \"black\" stroke-width = \"3\"/>" << endl;
+	}
+	//draw balls here
+	//now recurse
+	if (items[nxtnode]->left == -1)
+		return;
+	draw_next_node(os, items[nxtnode]->left, items[nxtnode]->xco, items[nxtnode]->yco, offset);
+	if (items[nxtnode]->right == -1)
+		return;
+	draw_next_node(os, items[nxtnode]->right, items[nxtnode]->xco, items[nxtnode]->yco, offset);
+}
+
+ostream& Tree::output_svg(ostream& os) const
+{
+	int xmin = min(0);
+	int xmax = max(0);
+	int ymax = maxdepth(0); 
+	os << "<?xml version=\"1.0\" standalone=\"no\"?>" << endl;
+	os << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << endl;
+	os << "<svg viewBox = \"0 0 " << (xmax - xmin) * 10 << " " << ymax * 100 << "\" version = \"1.1\">" << endl;
+	draw_next_node(os, 0, -1, -1, -xmin);
+	os << "</svg>" << endl;
 }
