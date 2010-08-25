@@ -268,3 +268,17 @@ void Tree::position()
 	//pre-order traversal
 	fixpoints(items[0], 0);
 }
+
+int Tree::min(int x) const
+{
+	if (items[x]->left == -1)
+		return items[x]->xco;
+	min(items[x]->left);
+}
+
+int Tree::max(int x) const
+{
+	if (items[x]->right == -1)
+		return items[x]->yco;
+	max(items[x]->right);
+}

@@ -42,6 +42,8 @@ class Tree
 		void position();
 		~Tree();
 		vector<Node*> items;
+		int max(int) const;
+		int min(int) const;
 
 	private:
 		void calcpoints(Node*, int, Extreme&, Extreme&);
