@@ -291,21 +291,47 @@ int Tree::maxdepth(int x) const
 		maxdepth(items[x]->left);
 }
 
-void Tree::draw_next_node(ostream& os, int nxtnode, int prevx, int prevy,
+void Tree::draw_next_line(ostream& os, int nxtnode, int prevx, int prevy,
 			const int offset) const
 {
-	//draw lines first
+	//draw lines
 	if (prevx != -1 && prevy != -1) {
-		os << "<line x1 = \"" << (prevx + offset) * 10 <<"\" y1 = \"" << prevy * 100 << "\" x2 = \"" << (items[nxtnode]->xco + offset) * 10 << "\" y2 = \"" << items[nxtnode]->yco * 100 << "\" stroke = \"black\" stroke-width = \"3\"/>" << endl;
+		os << "<line x1 = \""; 
+		os << (prevx + offset) * 10 <<"\" y1 = \"";
+		os << prevy * 100 << "\" x2 = \"";
+		os << (items[nxtnode]->xco + offset) * 10;
+		os << "\" y2 = \"" << items[nxtnode]->yco * 100;
+		os << "\" stroke = \"black\" stroke-width = \"3\"/>" << endl;
 	}
-	//draw balls here
 	//now recurse
 	if (items[nxtnode]->left == -1)
 		return;
-	draw_next_node(os, items[nxtnode]->left, items[nxtnode]->xco, items[nxtnode]->yco, offset);
+	draw_next_line(os, items[nxtnode]->left, items[nxtnode]->xco, items[nxtnode]->yco, offset);
 	if (items[nxtnode]->right == -1)
 		return;
-	draw_next_node(os, items[nxtnode]->right, items[nxtnode]->xco, items[nxtnode]->yco, offset);
+	draw_next_line(os, items[nxtnode]->right, items[nxtnode]->xco, items[nxtnode]->yco, offset);
+}
+
+void Tree::draw_next_node(ostream& os, int nxtnode, const int offset) const
+{
+	//draw balls
+	os << "<circle cx=\"";
+	os << (items[nxtnode]->xco + offset) * 10;
+	os << "\" cy=\"";
+	os << items[nxtnode]->yco * 100;
+	os << "\" r=\"50\" fill=\"";
+	if (items[nxtnode]->black)
+		os << "black";
+	else
+		os << "red";
+	os << "\" stroke=\"gray\" stroke-width=\"3\" />" << endl;
+	//now recurse
+	if (items[nxtnode]->left == -1)
+		return;
+	draw_next_node(os, items[nxtnode]->left, offset);
+	if (items[nxtnode]->right == -1)
+		return;
+	draw_next_node(os, items[nxtnode]->right, offset);
 }
 
 ostream& Tree::output_svg(ostream& os) const
@@ -316,6 +342,7 @@ ostream& Tree::output_svg(ostream& os) const
 	os << "<?xml version=\"1.0\" standalone=\"no\"?>" << endl;
 	os << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << endl;
 	os << "<svg viewBox = \"0 0 " << (xmax - xmin) * 10 << " " << ymax * 100 << "\" version = \"1.1\">" << endl;
-	draw_next_node(os, 0, -1, -1, -xmin);
+	draw_next_line(os, 0, -1, -1, -xmin);
+	draw_next_node(os, 0, -xmin);
 	os << "</svg>" << endl;
 }
