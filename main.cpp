@@ -12,6 +12,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/framework/StdInInputSource.hpp>
 #include "tree.hpp"
 
 using namespace std;
@@ -119,8 +120,86 @@ void allocBranchNode(Tree& rbtree, DOMNodeList* dlist)
 	XMLString::release(&testA);
 }
 
+void usage()
+{
+	cout << "Treedraw, copyright Adrian McMenamin, 2010" << endl;
+	cout << "Licensed under the GNU GPL, v2+" << endl;
+	cout << "Usage is..." << endl;
+	cout << "./treedraw [options]" << endl;
+	cout << "Valid options are:" << endl;
+	cout << "-?		Displays this message" << endl;
+	cout << "-f FILENAME	Read GraphML FILENAME" << endl;
+	cout << "(Default is to read from stdin)" << endl;
+	cout << "--fo FILENAME	Output results to FILENAME" << endl;
+	cout << "(Default is output to stdout)" << endl;
+	cout << "--s		Output as SVG graphics" << endl;
+	cout << "--t		Output as tree class stream" << endl;
+	cout << "(Default is tree class stream)" << endl;
+}
+
 int main(int argc, char* argv[])
 {
+	bool filein = false;
+	bool svgout = false;
+	bool treeout = true;
+	bool fileout = false;
+	string xmlFile;
+	string filename_out;
+
+	for (int z = 1; z < argc; z++)
+	{
+		if (strcmp(argv[z], "-f") == 0)
+		{
+			if (argc > z + 1)
+			{
+				xmlFile = argv[z + 1];
+				filein = true;
+				z++;
+				continue;
+			}
+			else
+			{
+				usage();
+				return 1;
+			}
+		}
+		if (strcmp(argv[z], "--fo") == 0)
+		{
+			if (argc > z + 1)
+			{
+				filename_out = argv[z + 1];
+				fileout = true;
+				z++;
+				continue;
+			}
+			else
+			{
+				usage();
+				return 1;
+			}
+		}
+		if (strcmp(argv[z], "--s") == 0)
+		{
+			treeout = false;
+			svgout = true;
+			continue;
+		}
+
+		if (strcmp(argv[z], "--t") == 0)
+		{
+			treeout = true;
+			svgout = false;
+			continue;
+		}
+
+		if (strcmp(argv[z], "-?") == 0)
+		{
+			usage();
+			return 0;
+		}
+	}
+
+
 	try {
 		XMLPlatformUtils::Initialize();
 	}
@@ -132,7 +211,6 @@ int main(int argc, char* argv[])
 	}
 
 	//XML Parsing code goes here
-	string xmlFile("graphic.xml");
 	XercesDOMParser* parser = new XercesDOMParser();
 	parser->setValidationScheme(XercesDOMParser::Val_Always);
 	parser->setDoNamespaces(true);
@@ -142,7 +220,10 @@ int main(int argc, char* argv[])
 	Tree rbtree;
 
 	try {
-		parser->parse(xmlFile.c_str());
+		if (filein)
+			parser->parse(xmlFile.c_str());
+		else
+			parser->parse(StdInInputSource());
 		DOMDocument* rbtreedoc = parser->getDocument();
 
 		//Process nodes
@@ -204,7 +285,27 @@ int main(int argc, char* argv[])
 	}
 
 	rbtree.position();
-	cout << rbtree;
+	if (treeout)
+	{
+		if (!fileout)
+			cout << rbtree;
+		else
+		{
+			ofstream outstream(filename_out.c_str());
+			outstream << rbtree;
+			outstream.close();
+		}
+	}
+	else if (svgout){
+		if (!fileout)
+			rbtree.output_svg(cout);
+		else {
+			ofstream outstream(filename_out.c_str());
+			rbtree.output_svg(outstream);
+			outstream.close();
+		}
+	}
+			
 cleanup:
 
 	delete parser;
