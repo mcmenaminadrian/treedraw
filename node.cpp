@@ -147,11 +147,12 @@ void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 		rmost.n = n;
 		rmost.offset = 0;
 		rmost.level = level;
+		n->offset = 0;
 		return;
 	}
 
 	const int minsep = distance;
-	int rootsep = minsep * 2;
+	int rootsep = minsep;
 	int cursep = rootsep;
 
 	while (left && right) {
@@ -164,40 +165,42 @@ void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 			loffsum = loffsum + left->offset;
 			cursep = cursep - (left->offset + 1) / 2;
 			ileft = left->right;
-			left = items[left->right];
+			left = items[ileft];
 		}
 		else
 		{
 			loffsum = loffsum - left->offset;
+			cursep = cursep + (left->offset + 1) /2;
 			if (left->left != -1) {
-				cursep = cursep + (left->offset + 1) / 2;
 				ileft = left->left;
-				left = items[left->left];
+				left = items[ileft];
 			}
 			else
-				break;
+				left = NULL;
 		}
 
 		if (right->left != -1 ) {
 			roffsum = roffsum - right->offset;
 			cursep = cursep - (right->offset + 1) / 2;
 			iright = right->left;
-			right = items[right->left];
+			right = items[iright];
 		}
 		else
 		{
 			roffsum = roffsum + right->offset;
+			cursep = cursep + (right->offset + 1) / 2;
 			if (right->right != -1) {
-				cursep = cursep + (right->offset + 1) / 2;
 				iright = right->right;
-				right = items[right->right];
+				right = items[iright];
 			}
 			else
-				break;
+				right = NULL;
 		}
 	}
 
 	n->offset = rootsep;
+	loffsum = loffsum - (rootsep + 1)/2;
+	roffsum = roffsum + (rootsep + 1)/2;
 
 	//update extreme descendants details
 	if (rl.level > ll.level || n->left == -1)
