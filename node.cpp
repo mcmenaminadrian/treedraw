@@ -200,7 +200,7 @@ void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 	n->offset = rootsep;
 
 	//update extreme descendants details
-	if (rr.level > ll.level || n->left == -1)
+	if (rl.level > ll.level || n->left == -1)
 	{
 		lmost = rl;
 		lmost.offset = lmost.offset + n->offset;
