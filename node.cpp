@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
-#include "tree.hpp"
+#include "node.hpp"
 
 using namespace std;
 

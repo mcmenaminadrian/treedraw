@@ -1,3 +1,6 @@
+#ifndef NODE_HPP
+#define NODE_HPP
+
 #include <string>
 #include <vector>
 
@@ -56,4 +59,4 @@ class Tree
 		void free();
 };
 
-
+#endif
