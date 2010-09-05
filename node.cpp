@@ -97,6 +97,26 @@ Tree::Tree()
 	distance = 11;
 }
 
+Tree::Tree(const Tree& t)
+{
+	free();
+	distance = t.distance;
+	int k = t.items.size();
+	for (int r = 0; r < k; r++)
+	{
+		Node* n = new Node(t.items[r]->getvalue().c_str());
+		n->left = t.items[r]->left;
+		n->right = t.items[r]->right;
+		n->black = t.items[r]->black;
+		n->otherdata = t.items[r]->otherdata;
+		n->xco = t.items[r]->xco;
+		n->yco = t.items[r]->yco;
+		n->offset = t.items[r]->offset;
+		n->thread = t.items[r]->thread;
+		items.push_back(n);
+	}
+}
+
 Tree::Tree(int d)
 {
 	distance = d;

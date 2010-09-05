@@ -41,6 +41,7 @@ class Tree
 	friend istream& operator>>(istream& is, Tree& t);
 	public:
 		Tree();
+		Tree(const Tree&);
 		Tree(int);
 		void position();
 		~Tree();

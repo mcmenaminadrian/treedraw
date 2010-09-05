@@ -13,7 +13,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/framework/StdInInputSource.hpp>
-#include "tree.hpp"
+#include "node.hpp"
 
 using namespace std;
 using namespace xercesc;
