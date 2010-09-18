@@ -3,6 +3,8 @@
 #include <string>
 #include "node.hpp"
 
+// Copyright (c) Adrian McMenamin, 2010
+// Licensed under v2 (or later) of GNU GPL
 using namespace std;
 
 Node::Node()
@@ -139,6 +141,10 @@ Tree::~Tree()
 
 void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 {
+	// algorithm from Reingold and Tilford
+	// "Tidier Drawing of Trees"
+	// IEEE Transactions on Software Engineering
+	// Vol SE-7 No 2 March 1981
 	Extreme rr, rl, lr, ll;
 	int loffsum = 0;
 	int roffsum = 0;
@@ -226,21 +232,21 @@ void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 	if (rl.level > ll.level || n->left == -1)
 	{
 		lmost = rl;
-		lmost.offset = lmost.offset + n->offset;
+		lmost.offset = lmost.offset + n->offset / 2;
 	}
 	else {
 		lmost = ll;
-		lmost.offset = lmost.offset - n->offset;
+		lmost.offset = lmost.offset - n->offset / 2;
 	}
 
 	if (lr.level > rr.level || n->right == -1)
 	{
 		rmost = lr;
-		rmost.offset = rmost.offset - n->offset;
+		rmost.offset = rmost.offset - n->offset / 2;
 	}
 	else {
 		rmost = rr;
-		rmost.offset = rmost.offset + n->offset;
+		rmost.offset = rmost.offset + n->offset / 2;
 	}
 
 	//threading
