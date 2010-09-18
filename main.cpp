@@ -135,6 +135,7 @@ void usage()
 	cout << "--s		Output as SVG graphics" << endl;
 	cout << "--t		Output as tree class stream" << endl;
 	cout << "(Default is tree class stream)" << endl;
+	cout << "--r [s]	Repeat read every s seconds" << endl;
 }
 
 int main(int argc, char* argv[])
@@ -143,6 +144,8 @@ int main(int argc, char* argv[])
 	bool svgout = false;
 	bool treeout = true;
 	bool fileout = false;
+	bool repeat = false;
+	int repinter = -1;
 	string xmlFile;
 	string filename_out;
 
@@ -197,8 +200,18 @@ int main(int argc, char* argv[])
 			usage();
 			return 0;
 		}
-	}
 
+		if (strcmp(argv[z], "--r") == 0) {
+			repeat = true;
+			if (z + 2 > argc) {
+				usage();
+				cout << "Must specify an interval" << endl;
+				return 1;
+			}
+			repinter = atoi(argv[z + 1]);
+			z++;
+		}		
+	}
 
 	try {
 		XMLPlatformUtils::Initialize();
@@ -219,6 +232,7 @@ int main(int argc, char* argv[])
 	parser->setErrorHandler(errHandler);
 	Tree rbtree;
 
+	do {
 	try {
 		if (filein)
 			parser->parse(xmlFile.c_str());
@@ -305,6 +319,10 @@ int main(int argc, char* argv[])
 			outstream.close();
 		}
 	}
+
+	if (repinter > 0)
+		sleep(repinter);
+	}while (repeat);
 			
 cleanup:
 
