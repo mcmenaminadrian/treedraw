@@ -232,21 +232,21 @@ void Tree::calcpoints(Node* n, int level, Extreme& lmost, Extreme& rmost)
 	if (rl.level > ll.level || n->left == -1)
 	{
 		lmost = rl;
-		lmost.offset = lmost.offset + n->offset / 2;
+		lmost.offset = lmost.offset + (n->offset + 1) / 2;
 	}
 	else {
 		lmost = ll;
-		lmost.offset = lmost.offset - n->offset / 2;
+		lmost.offset = lmost.offset - (n->offset + 1) / 2;
 	}
 
 	if (lr.level > rr.level || n->right == -1)
 	{
 		rmost = lr;
-		rmost.offset = rmost.offset - n->offset / 2;
+		rmost.offset = rmost.offset - (n->offset + 1) / 2;
 	}
 	else {
 		rmost = rr;
-		rmost.offset = rmost.offset + n->offset / 2;
+		rmost.offset = rmost.offset + (n->offset + 1) / 2;
 	}
 
 	//threading
